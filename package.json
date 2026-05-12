@@ -1,0 +1,39 @@
+{
+  "name": "claude-agent-team",
+  "version": "0.1.0",
+  "description": "Drop a battle-tested Claude Code agent team — Lead + specialists + the Memory Injection Protocol — into any repo in one command.",
+  "type": "module",
+  "bin": {
+    "claude-agent-team": "./bin/cli.mjs",
+    "cat-init": "./bin/cli.mjs"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "templates/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test test/"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "anthropic",
+    "agents",
+    "agent-team",
+    "ai-coding",
+    "subagents"
+  ],
+  "author": "Hassan Baig",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hassanbaig/claude-agent-team.git"
+  }
+}

@@ -1,0 +1,70 @@
+# {{PROJECT_NAME}} — Claude Code Instructions
+
+## Project
+
+{{PROJECT_NAME}}.
+
+- **Language**: {{LANG}}
+- **Framework**: {{FRAMEWORK}}
+- **Package manager**: {{PKG_MANAGER}}
+- **Test runner**: {{TEST_RUNNER}}
+
+_Fill in more project context here — what the codebase does, the high-level modules, key external services._
+
+## Agent Team
+
+This repo uses Claude Code Agent Teams. The default agent is `lead` (Opus), which auto-delegates to specialists based on the task.
+
+See `.claude/agents/lead.md` for the full team roster and routing rules. See `.claude/agents/lead.md#memory-injection-protocol-mandatory` for the memory discipline that keeps the team's knowledge from drifting.
+
+### Specialist agents
+
+- **scout** (Haiku) — fast codebase exploration
+- **planner** (Sonnet) — implementation planning, lean design
+- **investigator** (Opus) — bug investigation
+- **reviewer** (Sonnet) — code review, security, architecture
+- **test-writer** (Sonnet) — test generation
+- **db-analyst** (Sonnet) — database, schema, queries
+- **ops-scout** (Sonnet) — infra, CI/CD, deployment
+- **security-auditor** (Sonnet) — auth, tenant isolation, secrets, webhooks
+- **frontend-designer** (Opus) — UI design and implementation
+
+(Your installed roster may be smaller depending on the preset used at install time. Run `npx claude-agent-team upgrade --preset=full` to add the rest.)
+
+## Development conventions
+
+_Fill in the rules that should apply to all generated code — line length, naming, file size limits, where DTOs live, etc._
+
+- Functionality first, polish later
+- Reuse existing patterns over creating new abstractions
+- Bug fixes require regression tests
+- Type hints / type annotations on all functions
+
+## Commands
+
+```bash
+# install
+{{PKG_MANAGER}} install
+
+# run
+# (fill in the dev server command for your stack)
+
+# test
+# (fill in the test command)
+```
+
+## Shared team learnings
+
+The directory `.claude/agent-context/` accumulates team knowledge — module gotchas, infrastructure quirks, architecture rules — captured during real work. Lead injects relevant entries into subagent prompts so the same lessons aren't relearned every session.
+
+Check `.claude/agent-context/` for entries relevant to whatever you're touching:
+
+```bash
+ls .claude/agent-context/
+```
+
+These files are committed to git so all team members benefit. Personal notes live in `.claude/agent-memory-local/lead/` (gitignored).
+
+## Installed via
+
+[`claude-agent-team`](https://github.com/hassanbaig/claude-agent-team) — run `npx claude-agent-team doctor` to check the setup, or `upgrade` to refresh templates.

@@ -1,0 +1,13 @@
+node_modules/
+.DS_Store
+*.log
+.npm
+.env
+.env.local
+
+# Build artifacts (none yet — package is plain ESM)
+dist/
+build/
+
+# Local test scratch
+test/fixtures/output/
