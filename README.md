@@ -14,6 +14,7 @@ That's it. You now have:
 - The **Memory Injection Protocol** — a mandatory three-step cycle (Inject / Capture / Validate) that keeps your team's accumulated knowledge from rotting between sessions
 - A shared `.claude/agent-context/` memory store, with the contract that subagents can only read it and Lead is the single writer
 - **Industry presets** that pre-seed your memory with the gotchas every team in your vertical hits
+- **Skills** — procedural how-to documents the agents read before doing recurring operations (migrations, components, tests, PRs)
 
 ## Why this exists
 
@@ -79,6 +80,28 @@ Seeded gotchas:
 - **idempotency.md** — every money endpoint requires it, server-side storage shape, replay handling
 - **pii-handling.md** — PCI scope avoidance, KYC document storage, data subject rights
 
+## Skills (v0.3+)
+
+Skills are procedural how-to documents that agents read before doing recurring operations. The installer auto-detects which skills your stack needs and installs them. You can also pick explicitly with `--skills=...`.
+
+| Skill | What it covers |
+|---|---|
+| `frontend-design` | Design-system reuse, accessibility, responsive defaults, loading/empty/error states |
+| `playwright-e2e` | Session helpers, Page Objects, test data factories, waiting strategies |
+| `unit-tests` | Framework detection, AAA structure, mocking discipline, fixture conventions |
+| `database-migrations` | Zero-downtime patterns, index safety, backfill ordering, rollback testing |
+| `git-pr-workflow` | Branch naming, commit format, PR description, pre-merge checks |
+
+```bash
+npx claude-agent-team skills list                       # see what's available
+npx claude-agent-team init --skills=auto                # let stack detection pick (default)
+npx claude-agent-team init --skills=frontend-design,unit-tests   # pick explicit
+npx claude-agent-team skills add database-migrations    # add post-install
+npx claude-agent-team skills remove playwright-e2e      # remove
+```
+
+**Agent-context vs Skills**: agent-context = *gotchas to AVOID* (rules). Skills = *procedures to FOLLOW* (recipes). Both are subject to the Memory Injection Protocol — Lead injects relevant ones into subagent prompts.
+
 ## What it installs
 
 ```
@@ -97,6 +120,8 @@ Seeded gotchas:
 ├── agent-context/
 │   ├── README.md            # The memory store contract
 │   └── *.md                 # Seeded gotchas from your industry preset
+├── skills/
+│   └── <skill-name>/SKILL.md  # Procedural how-to docs
 ├── agent-memory-local/
 │   └── lead/MEMORY.md       # Lead's personal memory (gitignored)
 └── settings.json            # Activates Lead as default + agent-teams flag
@@ -180,7 +205,7 @@ The installer reads your repo's manifest files (`package.json`, `pyproject.toml`
 - `memory stats` — team-health dashboard
 - `add` / `remove` agents — surgical changes after install
 - `--integrations=k8s,sentry,grafana,aws-logs` — wire MCP servers + agent prompts so investigator can pull live observability data
-- Skills layer — modular "how-to" docs (frontend-design, playwright-cli, database migrations) that agents pull in for specific tasks
+- More skills — `feature-flags`, `error-handling`, `temporal-workflows`, framework-specific (`nextjs-app-router`, `nestjs-modules`, `fastapi-routers`)
 - GitHub Action — run `memory validate` on every PR
 
 ## License

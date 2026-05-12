@@ -4,6 +4,7 @@
 
 import { runInit } from "../lib/init.mjs";
 import { runDoctor } from "../lib/doctor.mjs";
+import { runSkills } from "../lib/skills.mjs";
 
 const ARGS = process.argv.slice(2);
 const CMD = ARGS[0];
@@ -18,10 +19,12 @@ Commands:
   init           Scaffold .claude/ in the current repo (idempotent)
   upgrade        Re-run init with merge: pulls new templates, preserves your edits
   doctor         Inspect the current .claude/ setup and report status
+  skills         Manage skills — list / add / remove
   help           Show this message
 
 Options for \`init\` / \`upgrade\`:
   --preset=<name>                    Agent roster preset (default: standard)
+  --skills=<a,b,c|auto|none>         Skills to install (default: auto-suggest from stack)
   --force                            Overwrite existing files (dangerous)
   --dry-run                          Show what would change without writing
   --project=<name>                   Project name for CLAUDE.md (defaults to repo dir)
@@ -38,12 +41,20 @@ Industry presets (full roster + curated agent-context gotchas):
   healthcare  HIPAA — PHI redaction, audit trails, clinic-level isolation
   fintech     Money invariants, idempotency, audit events, KYC/PII handling
 
+Skills (procedures the agents read before doing recurring operations):
+  frontend-design        Design-system reuse, a11y, responsive
+  playwright-e2e         E2E test patterns, page objects, waits
+  unit-tests             Framework match, AAA, mocking discipline
+  database-migrations    Zero-downtime, index safety, backfills, rollback
+  git-pr-workflow        Branch / commit / PR conventions
+
 Examples:
   cd my-repo && npx claude-agent-team init
-  npx claude-agent-team init --preset=saas --project="My API"
+  npx claude-agent-team init --preset=saas --skills=frontend-design,unit-tests
   npx claude-agent-team init --preset=healthcare
+  npx claude-agent-team skills list
+  npx claude-agent-team skills add database-migrations
   npx claude-agent-team doctor
-  npx claude-agent-team upgrade --dry-run
 
 Memory Injection Protocol docs: https://github.com/hassanbaig/claude-agent-team
 `;
@@ -73,6 +84,9 @@ async function main() {
       break;
     case "doctor":
       await runDoctor(FLAGS);
+      break;
+    case "skills":
+      await runSkills(FLAGS);
       break;
     case "help":
     case "--help":

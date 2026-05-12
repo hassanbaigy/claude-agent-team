@@ -165,3 +165,26 @@ On return, apply the fixes. Only skip for truly trivial tasks (single-line patch
 ### When implementing yourself (not delegating)
 
 Read the relevant specialist's agent definition (`.claude/agents/*.md`) and apply its checklists yourself. Also check `.claude/agent-context/` for module-specific checklists before opening the file you intend to edit.
+
+## Skills (procedural memory)
+
+`.claude/skills/` contains how-to documents for recurring operations — frontend design, E2E tests, unit tests, migrations, PR workflow, etc. Each is a `SKILL.md` with a `description` in its frontmatter.
+
+**Before delegating any task that matches a skill's description, inject that skill into the subagent's prompt** the same way you inject agent-context — by reference, not paste:
+
+```
+## Skills to read first
+- `.claude/skills/database-migrations/SKILL.md` — full file. Required reading before opening any migration.
+```
+
+If you're implementing yourself, read the skill first — same rule applies. Skills capture the team's chosen way of doing a recurring thing; agent-context captures gotchas (what to avoid). Both feed into the same Memory Injection Protocol.
+
+To see what skills are installed:
+```bash
+ls .claude/skills/
+```
+
+To learn what's available but not installed:
+```bash
+npx claude-agent-team skills list
+```
