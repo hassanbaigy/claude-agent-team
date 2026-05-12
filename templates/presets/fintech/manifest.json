@@ -1,0 +1,9 @@
+{
+  "name": "fintech",
+  "description": "Financial / payments / banking — adds money invariants, idempotency, audit trail, KYC/PII handling on top of the SaaS baseline.",
+  "agents": [
+    "lead", "scout", "planner", "investigator",
+    "reviewer", "test-writer", "db-analyst", "ops-scout",
+    "security-auditor"
+  ]
+}

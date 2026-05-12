@@ -21,21 +21,27 @@ Commands:
   help           Show this message
 
 Options for \`init\` / \`upgrade\`:
-  --preset=<minimal|standard|full>   Agent roster size (default: standard)
+  --preset=<name>                    Agent roster preset (default: standard)
   --force                            Overwrite existing files (dangerous)
   --dry-run                          Show what would change without writing
   --project=<name>                   Project name for CLAUDE.md (defaults to repo dir)
   --no-claude-md                     Skip writing CLAUDE.md
   --no-settings                      Skip writing .claude/settings.json
 
-Roster presets:
-  minimal   lead, scout, reviewer, test-writer
-  standard  + planner, investigator, db-analyst, ops-scout
-  full      + security-auditor, frontend-designer
+Roster presets (no seeded memory):
+  minimal     lead, scout, reviewer, test-writer
+  standard    + planner, investigator, db-analyst, ops-scout
+  full        + security-auditor, frontend-designer
+
+Industry presets (full roster + curated agent-context gotchas):
+  saas        Multi-tenant SaaS — tenant isolation, OAuth, webhooks, billing
+  healthcare  HIPAA — PHI redaction, audit trails, clinic-level isolation
+  fintech     Money invariants, idempotency, audit events, KYC/PII handling
 
 Examples:
   cd my-repo && npx claude-agent-team init
-  npx claude-agent-team init --preset=full --project="My API"
+  npx claude-agent-team init --preset=saas --project="My API"
+  npx claude-agent-team init --preset=healthcare
   npx claude-agent-team doctor
   npx claude-agent-team upgrade --dry-run
 

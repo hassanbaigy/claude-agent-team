@@ -1,6 +1,6 @@
 {
   "name": "claude-agent-team",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Drop a battle-tested Claude Code agent team — Lead + specialists + the Memory Injection Protocol — into any repo in one command.",
   "type": "module",
   "bin": {

@@ -1,0 +1,9 @@
+{
+  "name": "saas",
+  "description": "Multi-tenant SaaS — covers tenant isolation, OAuth, webhooks, billing integrity.",
+  "agents": [
+    "lead", "scout", "planner", "investigator",
+    "reviewer", "test-writer", "db-analyst", "ops-scout",
+    "security-auditor"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "healthcare",
+  "description": "HIPAA-aware healthcare SaaS — adds PHI redaction, audit-trail discipline, clinic-level tenant isolation on top of the SaaS baseline.",
+  "agents": [
+    "lead", "scout", "planner", "investigator",
+    "reviewer", "test-writer", "db-analyst", "ops-scout",
+    "security-auditor"
+  ]
+}

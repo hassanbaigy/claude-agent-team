@@ -10,9 +10,10 @@ npx claude-agent-team init
 That's it. You now have:
 
 - A **Lead** coordinator agent (Opus) that auto-delegates to specialists
-- 7+ specialist agents — scout, planner, investigator, reviewer, test-writer, db-analyst, ops-scout, security-auditor, frontend-designer
+- 8+ specialist agents — scout, planner, investigator, reviewer, test-writer, db-analyst, ops-scout, security-auditor, frontend-designer
 - The **Memory Injection Protocol** — a mandatory three-step cycle (Inject / Capture / Validate) that keeps your team's accumulated knowledge from rotting between sessions
 - A shared `.claude/agent-context/` memory store, with the contract that subagents can only read it and Lead is the single writer
+- **Industry presets** that pre-seed your memory with the gotchas every team in your vertical hits
 
 ## Why this exists
 
@@ -22,7 +23,61 @@ This package codifies a protocol that's been running in a production repo for we
 
 - **13 engineers** contributing to shared agent memory
 - **198 commits** across 30 topic files in a 14-day window
-- The protocol's enforcement mechanism — **every subagent must echo back an acknowledgment** of which memory files it read — makes injection auditable instead of aspirational
+- The enforcement mechanism — **every subagent must echo back an acknowledgment** of which memory files it read — makes injection auditable instead of aspirational
+
+## Quick start
+
+```bash
+# Generic — just the agent team, no pre-seeded gotchas
+npx claude-agent-team init
+
+# Industry preset — agents + curated gotchas your team will hit on day one
+npx claude-agent-team init --preset=saas        # multi-tenant SaaS
+npx claude-agent-team init --preset=healthcare  # HIPAA-aware
+npx claude-agent-team init --preset=fintech     # money invariants + audit
+```
+
+Then:
+
+```bash
+claude
+> who are you and what's in this repo?
+```
+
+Lead activates as the default agent, lists the team, and offers delegation paths.
+
+## Industry presets
+
+Each preset installs the full specialist roster AND pre-seeds `.claude/agent-context/` with curated gotcha files for that domain.
+
+### `--preset=saas`
+
+For multi-tenant SaaS — bills users, has OAuth integrations, receives webhooks, owns user-generated data.
+
+Seeded gotchas:
+- **arch-multi-tenancy.md** — tenant scoping rules, query patterns, cross-tenant boundaries
+- **webhooks.md** — HMAC verification (fail-closed), idempotency, replay windows
+- **oauth.md** — state validation, PKCE, redirect URI exact-match, token storage
+- **billing.md** — Stripe idempotency, integer money, dunning state machines, charge-after-persist
+
+### `--preset=healthcare`
+
+HIPAA-aware. Everything in `saas` plus:
+
+Seeded gotchas:
+- **hipaa-rules.md** — the 18 Safe Harbor PHI identifiers, BAAs, encryption requirements, retention
+- **phi-redaction.md** — whitelist > blacklist, logger filters, error message hygiene, Sentry scrubbing
+- **audit-trail.md** — event shape, append-only enforcement, §164.308 retention, real audit queries to pre-build
+
+### `--preset=fintech`
+
+For money-moving systems — payments, banking, crypto, lending.
+
+Seeded gotchas:
+- **money-invariants.md** — integer minor units (never floats), currency on every amount, banker's rounding, decimal math
+- **audit-events.md** — append-only ledger, write-before-call pattern, regulatory retention windows
+- **idempotency.md** — every money endpoint requires it, server-side storage shape, replay handling
+- **pii-handling.md** — PCI scope avoidance, KYC document storage, data subject rights
 
 ## What it installs
 
@@ -37,10 +92,11 @@ This package codifies a protocol that's been running in a production repo for we
 │   ├── test-writer.md       # Sonnet, tests
 │   ├── db-analyst.md        # Sonnet, DB
 │   ├── ops-scout.md         # Sonnet, infra
-│   ├── security-auditor.md  # Sonnet, security (preset=full)
-│   └── frontend-designer.md # Opus, UI (preset=full)
+│   ├── security-auditor.md  # Sonnet, security
+│   └── frontend-designer.md # Opus, UI (with preset=full)
 ├── agent-context/
-│   └── README.md            # The memory store contract
+│   ├── README.md            # The memory store contract
+│   └── *.md                 # Seeded gotchas from your industry preset
 ├── agent-memory-local/
 │   └── lead/MEMORY.md       # Lead's personal memory (gitignored)
 └── settings.json            # Activates Lead as default + agent-teams flag
@@ -52,14 +108,32 @@ CLAUDE.md                    # Project entry point (only created if absent)
 ## Commands
 
 ```bash
-npx claude-agent-team init                    # install (idempotent)
-npx claude-agent-team init --preset=full      # include security-auditor + frontend-designer
-npx claude-agent-team init --preset=minimal   # just lead + scout + reviewer + test-writer
-npx claude-agent-team upgrade                 # re-pull templates without clobbering edits
-npx claude-agent-team upgrade --force         # overwrite local changes (dangerous)
-npx claude-agent-team upgrade --dry-run       # show what would change
-npx claude-agent-team doctor                  # inspect current setup, report drift
+# Install (idempotent — never clobbers existing files without --force)
+npx claude-agent-team init [--preset=<name>]
+
+# Re-pull templates without clobbering edits
+npx claude-agent-team upgrade
+
+# Show what would change without writing
+npx claude-agent-team upgrade --dry-run
+
+# Inspect current setup, report drift
+npx claude-agent-team doctor
+
+# Help
+npx claude-agent-team help
 ```
+
+## All presets
+
+| Preset | Roster | Seeded memory | When to use |
+|--------|--------|---------------|-------------|
+| `minimal` | lead + 3 | none | Small library, solo project |
+| `standard` (default) | lead + 7 | none | Most app repos |
+| `full` | lead + 9 | none | Multi-tenant + UI repos |
+| `saas` | lead + 8 | 4 files | Multi-tenant SaaS, any vertical |
+| `healthcare` | lead + 8 | 3 files | HIPAA-regulated products |
+| `fintech` | lead + 8 | 4 files | Payments, banking, crypto, lending |
 
 ## The Memory Injection Protocol
 
@@ -86,16 +160,6 @@ Lead scans the result for non-obvious learnings — module gotchas, infrastructu
 
 Lead spawns a background scout (`run_in_background: true`) that reads every other file in `.claude/agent-context/` and verifies the bullets still match reality — paths exist, function names still resolve, env vars are still set. Stale entries get flagged and fixed.
 
-## Roster presets
-
-| Preset | Agents | When to use |
-|--------|--------|-------------|
-| `minimal` | lead, scout, reviewer, test-writer | Small library, solo project |
-| `standard` (default) | + planner, investigator, db-analyst, ops-scout | Most app repos |
-| `full` | + security-auditor, frontend-designer | Multi-tenant SaaS, anything with a UI |
-
-You can also pick agents à la carte by editing the install — each agent is a standalone `.md` file.
-
 ## Smart adaptations
 
 The installer reads your repo's manifest files (`package.json`, `pyproject.toml`, `go.mod`, `Cargo.toml`, `Gemfile`) and:
@@ -108,7 +172,16 @@ The installer reads your repo's manifest files (`package.json`, `pyproject.toml`
 
 - Node 18+ (for `npx`)
 - [Claude Code](https://claude.ai/code) installed (the `claude` CLI)
-- An Anthropic account with a plan that supports Claude Opus (Lead) and Claude Sonnet/Haiku (specialists)
+- An Anthropic account with a plan that supports Claude Opus (Lead) and Sonnet/Haiku (specialists)
+
+## Roadmap
+
+- `memory validate` — CLI-native staleness check (no LLM required)
+- `memory stats` — team-health dashboard
+- `add` / `remove` agents — surgical changes after install
+- `--integrations=k8s,sentry,grafana,aws-logs` — wire MCP servers + agent prompts so investigator can pull live observability data
+- Skills layer — modular "how-to" docs (frontend-design, playwright-cli, database migrations) that agents pull in for specific tasks
+- GitHub Action — run `memory validate` on every PR
 
 ## License
 
