@@ -10,7 +10,7 @@ npx claude-agent-team init
 That's it. You now have:
 
 - A **Lead** coordinator agent (Opus) that auto-delegates to specialists
-- 8+ specialist agents — scout, planner, investigator, reviewer, test-writer, db-analyst, ops-scout, security-auditor, frontend-designer
+- 10 specialist agents — scout, planner, investigator, reviewer, test-writer, e2e-tester, db-analyst, ops-scout, security-auditor, frontend-designer
 - The **Memory Injection Protocol** — a mandatory three-step cycle (Inject / Capture / Validate) that keeps your team's accumulated knowledge from rotting between sessions
 - A shared `.claude/agent-context/` memory store, with the contract that subagents can only read it and Lead is the single writer
 - **Industry presets** that pre-seed your memory with the gotchas every team in your vertical hits
@@ -113,6 +113,7 @@ npx claude-agent-team skills remove playwright-e2e      # remove
 │   ├── investigator.md      # Opus, bug investigation
 │   ├── planner.md           # Sonnet, lean design
 │   ├── test-writer.md       # Sonnet, tests
+│   ├── e2e-tester.md        # Sonnet, Playwright pre-commit gate + PR screenshots
 │   ├── db-analyst.md        # Sonnet, DB
 │   ├── ops-scout.md         # Sonnet, infra
 │   ├── security-auditor.md  # Sonnet, security
